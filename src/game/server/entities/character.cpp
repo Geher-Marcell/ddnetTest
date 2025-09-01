@@ -4,6 +4,7 @@
 #include "laser.h"
 #include "pickup.h"
 #include "projectile.h"
+#include "myProjectile.h"
 
 #include <antibot/antibot_data.h>
 #include <base/log.h>
@@ -437,6 +438,14 @@ void CCharacter::FireWeapon()
 	vec2 Direction = normalize(MouseTarget);
 
 	bool FullAuto = false;
+
+	//DARKING CHANGES
+
+	if(m_pPlayer->m_Drawgun)
+		FullAuto = true;
+
+	//END DARKING CHANGES
+
 	if(m_Core.m_ActiveWeapon == WEAPON_GRENADE || m_Core.m_ActiveWeapon == WEAPON_SHOTGUN || m_Core.m_ActiveWeapon == WEAPON_LASER)
 		FullAuto = true;
 	if(m_Core.m_Jetpack && m_Core.m_ActiveWeapon == WEAPON_GUN)
@@ -477,6 +486,11 @@ void CCharacter::FireWeapon()
 		return;
 
 	vec2 ProjStartPos = m_Pos + Direction * GetProximityRadius() * 0.75f;
+
+	if(m_pPlayer->m_Drawgun){
+		CreateDrawgunProjectile(m_Core.m_ActiveWeapon);
+		return;
+	}
 
 	switch(m_Core.m_ActiveWeapon)
 	{
@@ -805,6 +819,8 @@ void CCharacter::Tick()
 	m_PrevInput = m_Input;
 
 	m_PrevPos = m_Core.m_Pos;
+
+	//TODO Send broadcast to know ur in draw mode
 }
 
 void CCharacter::TickDeferred()
@@ -2552,4 +2568,21 @@ void CCharacter::SwapClients(int Client1, int Client2)
 {
 	const int HookedPlayer = m_Core.HookedPlayer();
 	m_Core.SetHookedPlayer(HookedPlayer == Client1 ? Client2 : HookedPlayer == Client2 ? Client1 : HookedPlayer);
+}
+
+//Darking
+
+void CCharacter::CreateDrawgunProjectile(int Type){
+	int Lifetime = (int)(Server()->TickSpeed() * 2); 
+
+	CCharacter *pChr = m_pPlayer->GetCharacter();
+	vec2 ScreenMousePosition = vec2(pChr->Core()->m_Input.m_TargetX, pChr->Core()->m_Input.m_TargetY);
+	vec2 WorldMousePosition = m_pPlayer->m_CameraInfo.ConvertTargetToWorld(m_pPlayer->GetCharacter()->GetPos(), ScreenMousePosition);
+
+	new MyProjectile(
+		GameWorld(),
+		Type, //Type
+		Lifetime, //Span
+		WorldMousePosition //Pos
+	);
 }

@@ -644,7 +644,7 @@ void CGameContext::SendChat(int ChatterClientId, int Team, const char *pText, in
 	char aBuf[256], aText[256];
 	str_copy(aText, pText, sizeof(aText));
 	if(ChatterClientId >= 0 && ChatterClientId < MAX_CLIENTS)
-		str_format(aBuf, sizeof(aBuf), "%d:%d:%s: %s", ChatterClientId, Team, Server()->ClientName(ChatterClientId), aText);
+		str_format(aBuf, sizeof(aBuf), "%d:%d:%s: br br patapim %s", ChatterClientId, Team, Server()->ClientName(ChatterClientId), aText);
 	else if(ChatterClientId == -2)
 	{
 		str_format(aBuf, sizeof(aBuf), "### %s", aText);
@@ -662,6 +662,8 @@ void CGameContext::SendChat(int ChatterClientId, int Team, const char *pText, in
 		Msg.m_ClientId = ChatterClientId;
 		Msg.m_pMessage = aText;
 
+		SendChatTarget(ChatterClientId, aText, VersionFlags);
+
 		// pack one for the recording only
 		if(g_Config.m_SvDemoChat)
 			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL | MSGFLAG_NOSEND, SERVER_DEMO_CLIENT);
@@ -671,8 +673,8 @@ void CGameContext::SendChat(int ChatterClientId, int Team, const char *pText, in
 		{
 			if(!m_apPlayers[i])
 				continue;
-			bool Send = (Server()->IsSixup(i) && (VersionFlags & FLAG_SIXUP)) ||
-				    (!Server()->IsSixup(i) && (VersionFlags & FLAG_SIX));
+
+			bool Send = (Server()->IsSixup(i) && (VersionFlags & FLAG_SIXUP)) ||(!Server()->IsSixup(i) && (VersionFlags & FLAG_SIX));
 
 			if(!m_apPlayers[i]->m_DND && Send)
 				Server()->SendPackMsg(&Msg, MSGFLAG_VITAL | MSGFLAG_NORECORD, i);
@@ -3965,6 +3967,10 @@ void CGameContext::RegisterChatCommands()
 	Console()->Register("unendless", "", CFGFLAG_CHAT | CMDFLAG_PRACTICE, ConPracticeUnEndlessHook, this, "Removes endless hook from you");
 	Console()->Register("invincible", "?i['0'|'1']", CFGFLAG_CHAT | CMDFLAG_PRACTICE, ConPracticeToggleInvincible, this, "Toggles invincible mode");
 	Console()->Register("kill", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConProtectedKill, this, "Kill yourself when kill-protected during a long game (use f1, kill for regular kill)");
+
+	//DARKING
+	Console()->Register("drawgun", "", CFGFLAG_CHAT, ConToggleDrawgun, this, "Toggles drawgun");
+	
 }
 
 void CGameContext::OnInit(const void *pPersistentData)

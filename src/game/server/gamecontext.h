@@ -557,6 +557,12 @@ private:
 
 	static void ConReloadCensorlist(IConsole::IResult *pResult, void *pUserData);
 
+	//Darking
+
+	static void ConToggleDrawgun(IConsole::IResult *pResult, void *pUserData);
+
+	//END DARKING
+
 	CCharacter *GetPracticeCharacter(IConsole::IResult *pResult);
 
 	CMutes m_Mutes;

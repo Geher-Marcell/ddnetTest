@@ -186,6 +186,10 @@ private:
 	bool m_SetSavePos[NUM_RESCUEMODES];
 	CSaveTee m_RescueTee[NUM_RESCUEMODES];
 
+	//DARKING
+
+	void CreateDrawgunProjectile(int Type);
+
 public:
 	CGameTeams *Teams() { return m_pTeams; }
 	void SetTeams(CGameTeams *pTeams);

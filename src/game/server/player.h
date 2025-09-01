@@ -239,6 +239,10 @@ public:
 
 	CSaveTee m_LastTeleTee;
 	std::optional<CSaveTee> m_LastDeath;
+
+	//DARKING
+
+	bool m_Drawgun;
 };
 
 #endif

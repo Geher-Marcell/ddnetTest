@@ -2766,6 +2766,7 @@ if(SERVER)
     entities/plasma.cpp
     entities/plasma.h
     entities/projectile.cpp
+    entities/myProjectile.cpp
     entities/projectile.h
     entity.cpp
     entity.h

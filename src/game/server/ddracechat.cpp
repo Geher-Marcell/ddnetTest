@@ -2500,3 +2500,18 @@ void CGameContext::ConTimeCP(IConsole::IResult *pResult, void *pUserData)
 	const char *pName = pResult->GetString(0);
 	pSelf->Score()->LoadPlayerTimeCp(pResult->m_ClientId, pName);
 }
+
+//Darking
+
+void CGameContext::ConToggleDrawgun(IConsole::IResult *pResult, void *pUserData){
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
+	if(!pPlayer)
+		return;
+	
+	pPlayer->m_Drawgun = !pPlayer->m_Drawgun;
+	
+	pSelf->SendChatTarget(pPlayer->GetCid(), pPlayer->m_Drawgun ? "Drawgun enabled." : "Drawgun disabled.");
+}
