@@ -3,6 +3,8 @@
 #ifndef GAME_SERVER_ENTITIES_CHARACTER_H
 #define GAME_SERVER_ENTITIES_CHARACTER_H
 
+#include "myPickup.h"
+
 #include <game/server/entity.h>
 
 #include <game/race_state.h>
@@ -188,9 +190,15 @@ private:
 
 	//DARKING
 
-	void CreateDrawgunProjectile(int Type);
+	MyPickup* m_Pet;
 
+	void CreateDrawgunProjectile(int Type);
+	
 public:
+	bool IsPetAlive() {return m_Pet != nullptr;}
+	void CreatePet(int Type);
+	void DestroyPet();
+
 	CGameTeams *Teams() { return m_pTeams; }
 	void SetTeams(CGameTeams *pTeams);
 	bool TrySetRescue(int RescueMode);

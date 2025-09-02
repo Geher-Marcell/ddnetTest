@@ -2505,13 +2505,19 @@ void CGameContext::ConTimeCP(IConsole::IResult *pResult, void *pUserData)
 
 void CGameContext::ConToggleDrawgun(IConsole::IResult *pResult, void *pUserData){
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	if(!CheckClientId(pResult->m_ClientId))
-		return;
+	if(!CheckClientId(pResult->m_ClientId)) return;
+
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
-	if(!pPlayer)
-		return;
+	if(!pPlayer) return;
 	
 	pPlayer->m_Drawgun = !pPlayer->m_Drawgun;
-	
 	pSelf->SendChatTarget(pPlayer->GetCid(), pPlayer->m_Drawgun ? "Drawgun enabled." : "Drawgun disabled.");
+
+	CCharacter *pChr = pPlayer->GetCharacter();
+	if(!pChr) return;
+
+	if(pChr->IsPetAlive())
+		pChr->DestroyPet();
+	else
+		pChr->CreatePet(POWERUP_NINJA);
 }

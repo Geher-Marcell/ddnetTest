@@ -2763,11 +2763,14 @@ if(SERVER)
     entities/light.h
     entities/pickup.cpp
     entities/pickup.h
+    entities/myPickup.cpp
+    entities/myPickup.h
     entities/plasma.cpp
     entities/plasma.h
     entities/projectile.cpp
-    entities/myProjectile.cpp
     entities/projectile.h
+    entities/myProjectile.cpp
+    entities/myProjectile.h
     entity.cpp
     entity.h
     eventhandler.cpp

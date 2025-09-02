@@ -5,6 +5,7 @@
 #include "pickup.h"
 #include "projectile.h"
 #include "myProjectile.h"
+#include "myPickup.h"
 
 #include <antibot/antibot_data.h>
 #include <base/log.h>
@@ -47,10 +48,15 @@ CCharacter::CCharacter(CGameWorld *pWorld, CNetObj_PlayerInput LastInput) :
 	{
 		CurrentTimeCp = 0.0f;
 	}
+
+	//Darking
+	m_Pet = nullptr;
 }
 
 void CCharacter::Reset()
 {
+	DestroyPet();
+
 	StopRecording();
 	Destroy();
 }
@@ -127,6 +133,9 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 			GameServer()->m_apSavedTees[m_pPlayer->GetCid()] = nullptr;
 		}
 	}
+
+	//Darking
+	CreatePet(POWERUP_NINJA);
 
 	return true;
 }
@@ -1009,6 +1018,8 @@ void CCharacter::Die(int Killer, int Weapon, bool SendKillMsg)
 	GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCid(), TeamMask());
 	Teams()->OnCharacterDeath(GetPlayer()->GetCid(), Weapon);
 	CancelSwapRequests();
+
+	DestroyPet();
 }
 
 bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
@@ -2585,4 +2596,21 @@ void CCharacter::CreateDrawgunProjectile(int Type){
 		Lifetime, //Span
 		WorldMousePosition //Pos
 	);
+}
+
+void CCharacter::CreatePet(int Type){
+	if(!m_pPlayer->m_Drawgun) return;
+	if(m_Pet) DestroyPet();
+
+	auto Pet = new MyPickup(GameWorld(), Type, this);
+	Pet->m_Pos = m_Pos;
+
+	m_Pet = Pet;
+}
+
+void CCharacter::DestroyPet(){
+	if(!m_Pet) return;
+
+	m_Pet->Reset();
+	m_Pet = nullptr;
 }
